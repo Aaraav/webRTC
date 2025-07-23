@@ -24,6 +24,9 @@ io.on('connection', (socket) => {
 
   socket.on("join", (params) => {
     const roomId = params.roomId;
+
+        socket.join(roomId);
+
     users[socket.id] = {
       roomId: roomId
     }
@@ -89,6 +92,14 @@ io.on('connection', (socket) => {
       }
     })
   });
+  socket.on('chat-message', (params) => {
+    const { text, roomId, author } = params;
+    // Broadcast the message to all other users in the room
+    socket.to(roomId).emit('chat-message', {
+      text,
+      author, // Forward the author's name
+    });
+  });
 
 });
 
